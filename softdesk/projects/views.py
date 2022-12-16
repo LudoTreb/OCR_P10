@@ -1,5 +1,5 @@
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
 from projects.serializers import (
@@ -10,9 +10,9 @@ from projects.serializers import (
 )
 
 
-class AdminProjectViewset(ModelViewSet):
+class ProjectViewset(ModelViewSet):
     serializer_class = ProjectSerializer
-
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Project.objects.all()
@@ -24,17 +24,9 @@ class AdminProjectViewset(ModelViewSet):
         pass
 
 
-class ProjectViewset(ModelViewSet):
-    serializer_class = ProjectSerializer
-
-    def get_queryset(self):
-        return Project.objects.all()
-
-
-
-
 class IssuesViewset(ModelViewSet):
     serializer_class = IssuesSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Issue.objects.all()
@@ -42,6 +34,7 @@ class IssuesViewset(ModelViewSet):
 
 class CommentViewset(ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Comment.objects.all()
@@ -49,6 +42,7 @@ class CommentViewset(ModelViewSet):
 
 class ContributorsViewset(ModelViewSet):
     serializer_class = ContributorSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Contributor.objects.all()
