@@ -1,7 +1,10 @@
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
+
 from projects.serializers import (
     ProjectSerializer,
     IssuesSerializer,
@@ -11,6 +14,11 @@ from projects.serializers import (
 
 
 class ProjectViewset(ModelViewSet):
+    """
+    This view allows all CRUD actions.
+    For the create's action is override
+    to add contributors fields
+    """
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -20,7 +28,7 @@ class ProjectViewset(ModelViewSet):
     def create(self, request):
         pass
 
-    def destroy(self, request):
+    def destroy(self, request, ):
         pass
 
 

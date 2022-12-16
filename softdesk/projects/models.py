@@ -18,11 +18,9 @@ class Project(models.Model):
 
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=8192, blank=True)
-    # Vérifier ce que fait ce champ et modifier en focntion
     type = models.fields.CharField(
         choices=Type.choices, max_length=128, default="WEBSITE"
     )
-    # définir dans les settings AUTH_USER_MODEL
     author_user_id = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
@@ -69,13 +67,12 @@ class Issue(models.Model):
     priority = models.CharField(choices=Priority.choices, max_length=128)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
     status = models.CharField(choices=Status.choices, max_length=128, default="A faire")
-    # définir dans les settings AUTH_USER_MODEL
-    # author_user_id = models.ForeignKey(
-    #     to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_user_id"
-    # )
-    # assignee_user_id = models.ForeignKey(
-    #     to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assignee_user_id"
-    # )
+    author_user_id = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_user_id"
+    )
+    assignee_user_id = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assignee_user_id"
+    )
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -89,7 +86,6 @@ class Comment(models.Model):
 
     description = models.TextField(max_length=8192, blank=True)
     issue_id = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
-    # définir dans les settings AUTH_USER_MODEL
     # author_user_id = models.ForeignKey(
     #     to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_user_id"
     # )
@@ -105,15 +101,15 @@ class Contributor(models.Model):
         """
         The choice for permission.
         """
-
-        ...
+        AUTEUR = "AUTHOR"
+        CONTRIBUTEUR = "CONTRIBUTOR"
 
     class Role(models.TextChoices):
         """
         The choice for the role.
         """
-
-        ...
+        CLIENT = "CLIENT"
+        DEV = "DEVELOPPEUR"
 
     user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project_id = models.ForeignKey(to=Project, on_delete=models.CASCADE)
