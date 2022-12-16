@@ -1,12 +1,27 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from projects.models import Project, Issues, Comments, Contributors
+from projects.models import Project, Issue, Comment, Contributor
 from projects.serializers import (
     ProjectSerializer,
     IssuesSerializer,
     CommentSerializer,
     ContributorSerializer,
 )
+
+
+class AdminProjectViewset(ModelViewSet):
+    serializer_class = ProjectSerializer
+
+
+    def get_queryset(self):
+        return Project.objects.all()
+
+    def create(self, request):
+        pass
+
+    def destroy(self, request):
+        pass
 
 
 class ProjectViewset(ModelViewSet):
@@ -22,18 +37,18 @@ class IssuesViewset(ModelViewSet):
     serializer_class = IssuesSerializer
 
     def get_queryset(self):
-        return Issues.objects.all()
+        return Issue.objects.all()
 
 
 class CommentViewset(ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        return Comments.objects.all()
+        return Comment.objects.all()
 
 
 class ContributorsViewset(ModelViewSet):
     serializer_class = ContributorSerializer
 
     def get_queryset(self):
-        return Contributors.objects.all()
+        return Contributor.objects.all()

@@ -27,8 +27,11 @@ class Project(models.Model):
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return self.title
 
-class Issues(models.Model):
+
+class Issue(models.Model):
     """
     The Issue model.
     """
@@ -75,14 +78,17 @@ class Issues(models.Model):
     # )
     time_created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
 
-class Comments(models.Model):
+
+class Comment(models.Model):
     """
     The comment model.
     """
 
     description = models.TextField(max_length=8192, blank=True)
-    issue_id = models.ForeignKey(to=Issues, on_delete=models.CASCADE)
+    issue_id = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
     # définir dans les settings AUTH_USER_MODEL
     # author_user_id = models.ForeignKey(
     #     to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_user_id"
@@ -90,7 +96,7 @@ class Comments(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
 
 
-class Contributors(models.Model):
+class Contributor(models.Model):
     """
     The contributor model.
     """

@@ -22,10 +22,12 @@ from projects.views import (
     IssuesViewset,
     CommentViewset,
     ContributorsViewset,
+    AdminProjectViewset,
 )
 
 router = routers.SimpleRouter()
 router.register("project", ProjectViewset, basename="project")
+router.register("admin/project", AdminProjectViewset, basename="admin-project")
 router.register("issues", IssuesViewset, basename="issues")
 router.register("comment", CommentViewset, basename="comment")
 router.register("contributor", ContributorsViewset, basename="contributor")
