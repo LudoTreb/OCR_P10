@@ -19,8 +19,9 @@ class ProjectViewset(ModelViewSet):
     For the create's action is override
     to add contributors fields
     """
+
     serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Project.objects.all()
@@ -28,13 +29,16 @@ class ProjectViewset(ModelViewSet):
     def create(self, request):
         pass
 
-    def destroy(self, request, ):
+    def destroy(
+        self,
+        request,
+    ):
         pass
 
 
 class IssuesViewset(ModelViewSet):
     serializer_class = IssuesSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Issue.objects.all()
@@ -42,7 +46,7 @@ class IssuesViewset(ModelViewSet):
 
 class CommentViewset(ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Comment.objects.all()
@@ -50,7 +54,7 @@ class CommentViewset(ModelViewSet):
 
 class ContributorsViewset(ModelViewSet):
     serializer_class = ContributorSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Contributor.objects.all()

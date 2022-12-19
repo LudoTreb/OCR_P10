@@ -67,11 +67,15 @@ class Issue(models.Model):
     priority = models.CharField(choices=Priority.choices, max_length=128)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
     status = models.CharField(choices=Status.choices, max_length=128, default="A faire")
-    author_user_id = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_user_id"
-    )
-    assignee_user_id = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assignee_user_id"
+    # author_user_id = models.ForeignKey(
+    #     to=settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name="author_user_id",
+    # )
+    # assignee_user_id = models.ForeignKey(
+    #     to=settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name="assignee_user_id",
     )
     time_created = models.DateTimeField(auto_now_add=True)
 
@@ -101,6 +105,7 @@ class Contributor(models.Model):
         """
         The choice for permission.
         """
+
         AUTEUR = "AUTHOR"
         CONTRIBUTEUR = "CONTRIBUTOR"
 
@@ -108,6 +113,7 @@ class Contributor(models.Model):
         """
         The choice for the role.
         """
+
         CLIENT = "CLIENT"
         DEV = "DEVELOPPEUR"
 
