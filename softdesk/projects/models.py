@@ -76,7 +76,7 @@ class Issue(models.Model):
     #     to=settings.AUTH_USER_MODEL,
     #     on_delete=models.CASCADE,
     #     related_name="assignee_user_id",
-    )
+    # )
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
