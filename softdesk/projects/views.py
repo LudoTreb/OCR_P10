@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
+from projects.permissions import IsProjectAuthor
 
 from projects.serializers import (
     ProjectSerializer,
@@ -21,7 +22,7 @@ class ProjectViewset(ModelViewSet):
     """
 
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProjectAuthor]
 
     def get_queryset(self):
         return Project.objects.all()
