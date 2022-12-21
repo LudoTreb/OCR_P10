@@ -30,10 +30,7 @@ class ProjectViewset(ModelViewSet):
     def create(self, request):
         pass
 
-    def destroy(
-        self,
-        request,
-    ):
+    def destroy(self, request,):
         pass
 
 
