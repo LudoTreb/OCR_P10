@@ -7,14 +7,14 @@ class IsProjectAuthor(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if obj.author_user_id == request.user:
+        if obj.author_user == request.user:
             return True
         return False
 
 
 class IsProjectContributor(permissions.BasePermission):
     """
-    check if the user is a contributo of the project
+    check if the user is a contributor of the project
     """
 
     def has_object_permission(self, request, view, obj):

@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from accounts.views import RegisterApi
@@ -27,16 +28,36 @@ from projects.views import (
 )
 
 router = routers.DefaultRouter()
+router.register(
+    r'project/(?P<project_pk>\d+)/users/',
+    ContributorsViewset,
+    basename='users'
+)
+
 router.register("project", ProjectViewset, basename="project")
-router.register("issues", IssuesViewset, basename="issues")
-router.register("comment", CommentViewset, basename="comment")
-router.register("contributor", ContributorsViewset, basename="contributor")
+
+router.register(
+    r'project/(?P<project_pk>\d+)/issues',
+    IssuesViewset,
+    basename='issues'
+)
+
+router.register(
+    r'project/(?P<project_pk>\d+)/issues/(?P<issue_id>\d+)/comment',
+    CommentViewset,
+    basename='comment'
+)
+
+
+
+# router.register("contributor", ContributorsViewset, basename="contributor")
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-    path("api/", include(router.urls)),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/register", RegisterApi.as_view(), name="register"),
+    path("", include(router.urls)),
+    path("login/", TokenObtainPairView.as_view()),
+    path("signup/", RegisterApi.as_view(), name="signup"),
+    path("signup/", RegisterApi.as_view(), name="signup"),
 ]

@@ -5,7 +5,7 @@ from projects.models import Project, Issue, Comment, Contributor
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ["id", "title", "description", "type", "author_user_id"]
+        fields = ["id", "title", "description", "type", "author_user"]
 
     def validate_project(self, value):
         if Project.objects.filter(title=value).exists():
@@ -24,8 +24,8 @@ class IssuesSerializer(serializers.ModelSerializer):
             "priority",
             "project",
             "status",
-            # 'author_user_id',
-            # 'assignee_user_id',
+            'author_user',
+            'assignee_user',
             "time_created",
         ]
 
@@ -37,7 +37,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "id",
             "description",
             "issue_id",
-            # 'author_user_id',
+            'author_user',
             "time_created",
         ]
 
@@ -48,7 +48,7 @@ class ContributorSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user_id",
-            "project_id",
+            "projects",
             "permission",
             "role",
         ]

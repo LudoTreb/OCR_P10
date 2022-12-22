@@ -134,7 +134,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "project_id",
+                    "projects",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         to="projects.project",
