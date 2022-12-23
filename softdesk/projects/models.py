@@ -40,34 +40,34 @@ class Issue(models.Model):
         The choice for tagging issue
         """
 
-        IMPROVEMENT = "Amélioration"
-        FEATURE = "Fonctionnalité"
-        BUG = "Bogue"
+        AMELIORATION = "Improvement"
+        FONCTIONALITE = "Feature"
+        BOGUE = "Bug"
 
     class Priority(models.TextChoices):
         """
         The choice for priority
         """
 
-        HIGH_PRIORITY = "Priorité haute"
-        MEDIUM_PRIORITY = "Priorité moyenne"
-        LOW_PRIORITY = "Priorité basse"
+        PRIORITE_HAUTE = "High priority"
+        PRIORITE_MOYENNE = "Medium priority"
+        PRIORITE_BASSE = "Low priority"
 
     class Status(models.TextChoices):
         """
         The choice for status
         """
 
-        TO_DO = "A faire"
-        WIP = "En cours"
-        COMPLETE = "Terminer"
+        A_FAIRE = "To do"
+        EN_COURS = "Wip"
+        TERMINER = "COMPLETE"
 
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=8192, blank=True)
-    tag = models.CharField(choices=Tag.choices, max_length=128, default=Tag.BUG)
-    priority = models.CharField(choices=Priority.choices, max_length=128, default=Priority.MEDIUM_PRIORITY)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
-    status = models.CharField(choices=Status.choices, max_length=128, default=Status.TO_DO)
+    priority = models.CharField(choices=Priority.choices, max_length=128, default=Priority.PRIORITE_BASSE)
+    tag = models.CharField(choices=Tag.choices, max_length=128, default=Tag.BOGUE)
+    status = models.CharField(choices=Status.choices, max_length=128, default=Status.A_FAIRE)
     author_user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

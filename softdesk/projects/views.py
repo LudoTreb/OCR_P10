@@ -73,7 +73,35 @@ class CommentViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Comment.objects.all()
+        issue = get_object_or_404(Issue, pk=self.kwargs['issue_id'])
+        return Comment.objects.filter(issue_id=issue)
+
+    def create(self, request, issue_pk=None, *args, **kwargs):
+        issue = get_object_or_404(Issue, pk=self.kwargs['issue_id'])
+        request_data = request.data.copy()
+        request_data["author_user"] = request.user.id
+        request_data["issue_id"] = issue.id
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, issue_pk=None, *args, **kwargs):
+        issue = get_object_or_404(Issue, pk=self.kwargs['issue_id'])
+        request_data = request.data.copy()
+        request_data["author_user"] = request.user.id
+        request_data["issue_id"] = issue.id
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request_data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
 
 class ContributorsViewset(ModelViewSet):
