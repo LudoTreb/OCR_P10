@@ -29,7 +29,7 @@ from projects.views import (
 
 router = routers.DefaultRouter()
 router.register(
-    r'project/(?P<project_pk>\d+)/users/',
+    r'project/(?P<project_pk>\d+)/users',
     ContributorsViewset,
     basename='users'
 )
