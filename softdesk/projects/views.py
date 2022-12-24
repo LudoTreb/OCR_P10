@@ -111,10 +111,25 @@ class ContributorsViewset(ModelViewSet):
     def get_queryset(self):
         return Contributor.objects.all()
 
-    # def list(self, request, project_pk=None):
-    #     """ GET all projects if permission"""
-    #     project = get_object_or_404(Project, pk=project_pk)
-    #     self.check_object_permissions(request, project)
-    #     queryset = Contributor.objects.filter(project=project_pk)
-    #     serializer = ContributorSerializer(queryset, many=True)
-    #     return Response(serializer.data)
+    def list(self, request, project_pk=None):
+        """ GET all projects if permission"""
+        project = get_object_or_404(Project, pk=project_pk)
+        self.check_object_permissions(request, project)
+        queryset = Contributor.objects.filter(projects=project_pk)
+        serializer = ContributorSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, project_pk=None):
+        """Create project if permission and add the owner as contributor."""
+        project = get_object_or_404(Project, pk=project_pk)
+        self.check_object_permissions(request, project)
+        request_data = request.data.copy()
+        request_data.update({
+            'projects': project_pk,
+            'permission': 'Contributeur',
+        })
+        serializer = ContributorSerializer(data=request_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
