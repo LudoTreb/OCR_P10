@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
-from projects.permissions import IsProjectAuthor
+from projects.permissions import IsProjectAuthor, IsProjectContributor
 
 from projects.serializers import (
     ProjectSerializer,
@@ -40,7 +40,7 @@ class ProjectViewset(ModelViewSet):
 
 class IssuesViewset(ModelViewSet):
     serializer_class = IssuesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProjectContributor]
 
     def get_queryset(self):
         return Issue.objects.all()
@@ -67,10 +67,26 @@ class IssuesViewset(ModelViewSet):
         serializer = self.get_serializer(self.get_queryset, many=True)
         return Response(serializer.data)
 
+    def update(self, request, project_pk=None, *args, **kwargs):
+        project = get_object_or_404(Project, pk=project_pk)
+        request_data = request.data.copy()
+        request_data["author_user"] = request.user.id
+        request_data["project"] = project_pk
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request_data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
 
 class CommentViewset(ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProjectContributor]
 
     def get_queryset(self):
         issue = get_object_or_404(Issue, pk=self.kwargs['issue_id'])
