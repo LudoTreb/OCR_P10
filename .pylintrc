@@ -1,0 +1,14 @@
+[MASTER]
+ignore = migrations, apps.py, manage.py
+
+disable =
+    too-few-public-methods,
+    unused-argument,
+    no-member,
+    too-many-ancestors,
+    arguments-differ,
+    keyword-arg-before-vararg,
+    C0103,
+    protected-access,
+    unused-variable,
+
