@@ -23,18 +23,23 @@ Server can be run by this command :
 python manage.py runserver
 ```    
 and open in browser this adress: [http:/127.0.0.1:8000/]()
+
+***
 ## Postman documentation
-here you can find the [postman documentation](https://documenter.getpostman.com/view/23129255/2s8Z6u3ZVi)
- 
+Here the documentation of the Softdesk's API: [postman documentation](https://documenter.getpostman.com/view/23129255/2s8Z6u3ZVi)
 
 ***
 ## Pylint report
-A voir s'il faut le faire ou pas?
+The file .pylintrc contents parameters for checking Pylint.  
+It checks syntax, error, coding stadard of the code with this command:  
+From the terminal into the root folder 'Softdesk'
 ```
-pylint src
+pylint softdesk
 ```
 
 ## What I learned with this project is
-A remplir 
+I learn how to create an API with Django Rest Framework. 
+How to protect with authenticated and peermission some action of the CRUD. 
+I learn to use view class and a nested router url.   
 
  
