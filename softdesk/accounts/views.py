@@ -1,20 +1,24 @@
-from django.contrib.auth import authenticate
-from rest_framework import generics, status
+"""
+The view for account.
+"""
+from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from accounts.serializers import UserSerializer, RegisterSerializer
 
 
-# Register API
-
-
 class RegisterApi(generics.GenericAPIView):
+    """
+    the view for signup.
+    """
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        """
+        create a new account.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -25,5 +29,3 @@ class RegisterApi(generics.GenericAPIView):
                 ).data,
             }
         )
-
-

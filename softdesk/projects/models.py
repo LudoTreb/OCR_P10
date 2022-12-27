@@ -1,3 +1,6 @@
+"""
+Models for project, issue, contributor, comment.
+"""
 from django.conf import settings
 from django.db import models
 
@@ -27,7 +30,7 @@ class Project(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return f"{self.title}"
 
 
 class Issue(models.Model):
@@ -65,23 +68,29 @@ class Issue(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=8192, blank=True)
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
-    priority = models.CharField(choices=Priority.choices, max_length=128, default=Priority.PRIORITE_BASSE)
+    priority = models.CharField(
+        choices=Priority.choices, max_length=128, default=Priority.PRIORITE_BASSE
+    )
     tag = models.CharField(choices=Tag.choices, max_length=128, default=Tag.BOGUE)
-    status = models.CharField(choices=Status.choices, max_length=128, default=Status.A_FAIRE)
+    status = models.CharField(
+        choices=Status.choices, max_length=128, default=Status.A_FAIRE
+    )
     author_user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="author_user", null=True,
+        related_name="author_user",
+        null=True,
     )
     assignee_user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="assignee_user", null=True,
+        related_name="assignee_user",
+        null=True,
     )
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title}"
 
 
 class Comment(models.Model):
@@ -92,7 +101,9 @@ class Comment(models.Model):
     description = models.TextField(max_length=8192, blank=True)
     issue_id = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
     author_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comment_author_user"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comment_author_user",
     )
     time_created = models.DateTimeField(auto_now_add=True)
 
@@ -119,6 +130,8 @@ class Contributor(models.Model):
         DEV = "Développeur"
 
     user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    projects = models.ManyToManyField(to=Project,)
+    projects = models.ManyToManyField(
+        to=Project,
+    )
     permission = models.CharField(choices=Permission.choices, max_length=128)
     role = models.CharField(choices=Role.choices, max_length=128, default=Role.CLIENT)

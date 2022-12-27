@@ -1,10 +1,18 @@
+"""
+The serialisazer for account.
+"""
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-# Register serializer
 class RegisterSerializer(serializers.ModelSerializer):
+    """
+    The user signup serializer.
+    """
     class Meta:
+        """
+        The user model and fields.
+        """
         model = User
         fields = (
             "id",
@@ -19,6 +27,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        """
+        Create a new user.
+        """
         user = User.objects.create_user(
             validated_data["username"],
             email=validated_data["email"],
@@ -29,9 +40,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# User serializer
 class UserSerializer(serializers.ModelSerializer):
+    """
+    The user serializer.
+    """
     class Meta:
+        """
+        The user model.
+        """
         model = User
         fields = (
             "id",

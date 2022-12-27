@@ -16,8 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.views import RegisterApi
 from projects.views import (
@@ -29,26 +28,18 @@ from projects.views import (
 
 router = routers.DefaultRouter()
 router.register(
-    r'project/(?P<project_pk>\d+)/users',
-    ContributorsViewset,
-    basename='users'
+    r"project/(?P<project_pk>\d+)/users", ContributorsViewset, basename="users"
 )
 
 router.register("project", ProjectViewset, basename="project")
 
-router.register(
-    r'project/(?P<project_pk>\d+)/issues',
-    IssuesViewset,
-    basename='issues'
-)
+router.register(r"project/(?P<project_pk>\d+)/issues", IssuesViewset, basename="issues")
 
 router.register(
-    r'project/(?P<project_pk>\d+)/issues/(?P<issue_id>\d+)/comment',
+    r"project/(?P<project_pk>\d+)/issues/(?P<issue_id>\d+)/comment",
     CommentViewset,
-    basename='comment'
+    basename="comment",
 )
-
-
 
 # router.register("contributor", ContributorsViewset, basename="contributor")
 

@@ -1,3 +1,7 @@
+"""
+Project, issue, contributor, comment for administrator.
+"""
+
 from django.contrib import admin
 
 from projects.models import Project, Issue, Contributor, Comment
