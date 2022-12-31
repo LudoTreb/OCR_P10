@@ -9,10 +9,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     """
     The user signup serializer.
     """
+
     class Meta:
         """
         The user model and fields.
         """
+
         model = User
         fields = (
             "id",
@@ -44,10 +46,12 @@ class UserSerializer(serializers.ModelSerializer):
     """
     The user serializer.
     """
+
     class Meta:
         """
         The user model.
         """
+
         model = User
         fields = (
             "id",

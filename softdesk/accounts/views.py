@@ -12,6 +12,7 @@ class RegisterApi(generics.GenericAPIView):
     """
     the view for signup.
     """
+
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 

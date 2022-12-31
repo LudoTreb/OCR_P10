@@ -127,7 +127,7 @@ class CommentViewset(ModelViewSet):
     """
 
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsProjectContributor]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """

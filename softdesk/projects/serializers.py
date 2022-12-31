@@ -10,10 +10,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     """
     The project serializer.
     """
+
     class Meta:
         """
         The model's project.
         """
+
         model = Project
         fields = ["id", "title", "description", "type", "author_user"]
 
@@ -30,10 +32,12 @@ class IssuesSerializer(serializers.ModelSerializer):
     """
     The issue serializer.
     """
+
     class Meta:
         """
         The model's issue.
         """
+
         model = Issue
         fields = [
             "id",
@@ -53,10 +57,12 @@ class CommentSerializer(serializers.ModelSerializer):
     """
     The comment serializer.
     """
+
     class Meta:
         """
         The model's comment.
         """
+
         model = Comment
         fields = [
             "id",
@@ -71,10 +77,12 @@ class ContributorSerializer(serializers.ModelSerializer):
     """
     The contributor serializer.
     """
+
     class Meta:
         """
         The model's contributor.
         """
+
         model = Contributor
         fields = [
             "id",
