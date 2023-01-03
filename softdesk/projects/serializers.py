@@ -36,7 +36,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         return Contributor.objects.filter(project=instance).values("user_id__username")
 
-
     class Meta:
         """
         The model's project.
@@ -97,6 +96,3 @@ class CommentSerializer(serializers.ModelSerializer):
             "author_user",
             "time_created",
         ]
-
-
-

@@ -3,13 +3,22 @@ Views for project, issue, comment & contributor.
 """
 from django.shortcuts import get_object_or_404
 from rest_framework import status, response
-from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin
+from rest_framework.mixins import (
+    ListModelMixin,
+    UpdateModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
-from projects.permissions import IsProjectAuthor, IsProjectContributor, IsIssueProjectContributor
+from projects.permissions import (
+    IsProjectAuthor,
+    IsProjectContributor,
+    IsIssueProjectContributor,
+)
 from projects.serializers import (
     ProjectSerializer,
     IssuesSerializer,
@@ -81,10 +90,14 @@ class IssuesViewset(ModelViewSet):
 
         project = get_object_or_404(Project, pk=project_pk)
 
-        is_project_contributor = IsProjectContributor().has_object_permission(request, view=self, obj=project)
+        is_project_contributor = IsProjectContributor().has_object_permission(
+            request, view=self, obj=project
+        )
         if is_project_contributor is False:
-            return Response({'detail': "You do not have permission to perform this action."},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         queryset = Issue.objects.filter(project=project_pk)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -100,10 +113,14 @@ class IssuesViewset(ModelViewSet):
         """
         project = get_object_or_404(Project, pk=project_pk)
 
-        is_project_contributor = IsProjectContributor().has_object_permission(request, view=self, obj=project)
+        is_project_contributor = IsProjectContributor().has_object_permission(
+            request, view=self, obj=project
+        )
         if is_project_contributor is False:
-            return Response({'detail': "You do not have permission to perform this action."},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         request_data = request.data.copy()
         request_data["author_user"] = request.user.id
         request_data["project"] = project_pk
