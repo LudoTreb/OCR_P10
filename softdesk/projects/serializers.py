@@ -6,10 +6,36 @@ from rest_framework import serializers
 from projects.models import Project, Issue, Comment, Contributor
 
 
+class ContributorSerializer(serializers.ModelSerializer):
+    """
+    The contributor serializer.
+    """
+
+    class Meta:
+        """
+        The model's contributor.
+        """
+
+        model = Contributor
+        fields = [
+            "id",
+            "user_id",
+            "permission",
+            "role",
+        ]
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     """
     The project serializer.
     """
+
+    contributors = serializers.SerializerMethodField()
+
+    def get_contributors(self, instance):
+
+        return Contributor.objects.filter(project=instance).values("user_id__username")
+
 
     class Meta:
         """
@@ -17,7 +43,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         """
 
         model = Project
-        fields = ["id", "title", "description", "type", "author_user"]
+        fields = ["id", "title", "description", "type", "author_user", "contributors"]
 
     def validate_project(self, value):
         """
@@ -73,21 +99,4 @@ class CommentSerializer(serializers.ModelSerializer):
         ]
 
 
-class ContributorSerializer(serializers.ModelSerializer):
-    """
-    The contributor serializer.
-    """
 
-    class Meta:
-        """
-        The model's contributor.
-        """
-
-        model = Contributor
-        fields = [
-            "id",
-            "user_id",
-            "projects",
-            "permission",
-            "role",
-        ]

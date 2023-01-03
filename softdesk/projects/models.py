@@ -5,6 +5,33 @@ from django.conf import settings
 from django.db import models
 
 
+class Contributor(models.Model):
+    """
+    The contributor model.
+    """
+
+    class Permission(models.TextChoices):
+        """
+        The choice for permission.
+        """
+
+        AUTHOR = "Auteur"
+        CONTRIBUTOR = "Contributeur"
+
+    class Role(models.TextChoices):
+        """
+        The choice for the role.
+        """
+
+        CLIENT = "Client"
+        DEV = "Développeur"
+
+    user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    permission = models.CharField(choices=Permission.choices, max_length=128)
+    role = models.CharField(choices=Role.choices, max_length=128, default=Role.CLIENT)
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, null=True)
+
+
 class Project(models.Model):
     """
     The project model.
@@ -106,32 +133,3 @@ class Comment(models.Model):
         related_name="comment_author_user",
     )
     time_created = models.DateTimeField(auto_now_add=True)
-
-
-class Contributor(models.Model):
-    """
-    The contributor model.
-    """
-
-    class Permission(models.TextChoices):
-        """
-        The choice for permission.
-        """
-
-        AUTHOR = "Auteur"
-        CONTRIBUTOR = "Contributeur"
-
-    class Role(models.TextChoices):
-        """
-        The choice for the role.
-        """
-
-        CLIENT = "Client"
-        DEV = "Développeur"
-
-    user_id = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    projects = models.ManyToManyField(
-        to=Project,
-    )
-    permission = models.CharField(choices=Permission.choices, max_length=128)
-    role = models.CharField(choices=Role.choices, max_length=128, default=Role.CLIENT)

@@ -2,13 +2,14 @@
 Views for project, issue, comment & contributor.
 """
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, response
+from rest_framework.mixins import ListModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from projects.models import Project, Issue, Comment, Contributor
-from projects.permissions import IsProjectAuthor, IsProjectContributor
+from projects.permissions import IsProjectAuthor, IsProjectContributor, IsIssueProjectContributor
 from projects.serializers import (
     ProjectSerializer,
     IssuesSerializer,
@@ -26,14 +27,20 @@ class ProjectViewset(ModelViewSet):
     """
 
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated, IsProjectAuthor]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """
         Get a query set of all project.
         """
+        contributors = Contributor.objects.filter(user_id=self.request.user)
+        projects = Project.objects.filter(author_user=self.request.user)
 
-        return Project.objects.filter(author_user=self.request.user)
+        contributor_project_ids = contributors.values_list("project", flat=True)
+
+        print(projects)
+        contributor_projects = Project.objects.filter(id__in=contributor_project_ids)
+        return projects | contributor_projects
 
     def create(self, request, *args, **kwargs):
         """
@@ -59,7 +66,7 @@ class IssuesViewset(ModelViewSet):
     """
 
     serializer_class = IssuesSerializer
-    permission_classes = [IsAuthenticated, IsProjectContributor]
+    permission_classes = [IsAuthenticated, IsIssueProjectContributor]
 
     def get_queryset(self):
         """
@@ -67,28 +74,17 @@ class IssuesViewset(ModelViewSet):
         """
         return Issue.objects.all()
 
-    def create(self, request, project_pk=None, *args, **kwargs):
-        """
-        overide create action to fill the author_user and project fields.
-        """
-        project = get_object_or_404(Project, pk=project_pk)
-        request_data = request.data.copy()
-        request_data["author_user"] = request.user.id
-        request_data["project"] = project_pk
-        serializer = self.get_serializer(data=request_data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
     def list(self, request, project_pk=None, *args, **kwargs):
         """
         overide list action to filter issues by project.
         """
 
         project = get_object_or_404(Project, pk=project_pk)
+
+        is_project_contributor = IsProjectContributor().has_object_permission(request, view=self, obj=project)
+        if is_project_contributor is False:
+            return Response({'detail': "You do not have permission to perform this action."},
+                            status=status.HTTP_401_UNAUTHORIZED)
         queryset = Issue.objects.filter(project=project_pk)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -98,15 +94,37 @@ class IssuesViewset(ModelViewSet):
         serializer = self.get_serializer(self.get_queryset, many=True)
         return Response(serializer.data)
 
+    def create(self, request, project_pk=None, *args, **kwargs):
+        """
+        overide create action to fill the author_user and project fields.
+        """
+        project = get_object_or_404(Project, pk=project_pk)
+
+        is_project_contributor = IsProjectContributor().has_object_permission(request, view=self, obj=project)
+        if is_project_contributor is False:
+            return Response({'detail': "You do not have permission to perform this action."},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        request_data = request.data.copy()
+        request_data["author_user"] = request.user.id
+        request_data["project"] = project_pk
+        request_data["assignee_user"] = request.user.id
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
     def update(self, request, project_pk=None, *args, **kwargs):
         """
         overide update action to fill the author_user and project fields.
         """
 
-        project = get_object_or_404(Project, pk=project_pk)
         request_data = request.data.copy()
         request_data["author_user"] = request.user.id
         request_data["project"] = project_pk
+        request_data["assignee_user"] = request.user.id
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request_data, partial=partial)
@@ -117,6 +135,12 @@ class IssuesViewset(ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+    def destroy(self, request, project_pk=None, *args, **kwargs):
+
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentViewset(ModelViewSet):
@@ -196,7 +220,7 @@ class ContributorsViewset(ModelViewSet):
         """
         project = get_object_or_404(Project, pk=project_pk)
         self.check_object_permissions(request, project)
-        queryset = Contributor.objects.filter(projects=project_pk)
+        queryset = Contributor.objects.filter(project=project_pk)
         serializer = ContributorSerializer(queryset, many=True)
         return Response(serializer.data)
 

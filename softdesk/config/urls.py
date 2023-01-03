@@ -21,9 +21,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from accounts.views import RegisterApi
 from projects.views import (
     ProjectViewset,
-    IssuesViewset,
+
     CommentViewset,
-    ContributorsViewset,
+    ContributorsViewset, IssuesViewset,
 )
 
 router = routers.DefaultRouter()
