@@ -17,7 +17,8 @@ from projects.models import Project, Issue, Comment, Contributor
 from projects.permissions import (
     IsProjectAuthor,
     IsProjectContributor,
-    IsIssueProjectContributor, IsCommentIssueProjectContributor,
+    IsIssueProjectContributor,
+    IsCommentIssueProjectContributor,
 )
 from projects.serializers import (
     ProjectSerializer,
@@ -168,7 +169,10 @@ class CommentViewset(ModelViewSet):
     """
 
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsCommentIssueProjectContributor, ]
+    permission_classes = [
+        IsAuthenticated,
+        IsCommentIssueProjectContributor,
+    ]
 
     def get_queryset(self):
         """

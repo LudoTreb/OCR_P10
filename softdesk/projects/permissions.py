@@ -38,4 +38,6 @@ class IsIssueProjectContributor(permissions.BasePermission):
 
 class IsCommentIssueProjectContributor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.issue_id.project.contributor_set.filter(user_id=request.user).exists()
+        return obj.issue_id.project.contributor_set.filter(
+            user_id=request.user
+        ).exists()
