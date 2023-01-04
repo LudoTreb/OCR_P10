@@ -17,7 +17,7 @@ from projects.models import Project, Issue, Comment, Contributor
 from projects.permissions import (
     IsProjectAuthor,
     IsProjectContributor,
-    IsIssueProjectContributor,
+    IsIssueProjectContributor, IsCommentIssueProjectContributor,
 )
 from projects.serializers import (
     ProjectSerializer,
@@ -168,7 +168,7 @@ class CommentViewset(ModelViewSet):
     """
 
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCommentIssueProjectContributor, ]
 
     def get_queryset(self):
         """
@@ -178,10 +178,52 @@ class CommentViewset(ModelViewSet):
         issue = get_object_or_404(Issue, pk=self.kwargs["issue_id"])
         return Comment.objects.filter(issue_id=issue)
 
-    def create(self, request, issue_pk=None, *args, **kwargs):
+    def list(self, request, project_pk=None, issue_pk=None, *args, **kwargs):
+        """
+        overide list action to filter comment by issues by project.
+        """
+
+        project = get_object_or_404(Project, pk=project_pk)
+
+        is_project_contributor = IsProjectContributor().has_object_permission(
+            request, view=self, obj=project
+        )
+        if is_project_contributor is False:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        issue = get_object_or_404(Issue, pk=self.kwargs["issue_id"])
+        queryset = Comment.objects.filter(issue_id=issue)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(self.get_queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        issue = get_object_or_404(Issue, pk=self.kwargs["issue_id"])
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def create(self, request, issue_pk=None, project_pk=None, *args, **kwargs):
         """
         overide create action to fill the author_user and issue_id fields.
         """
+        project = get_object_or_404(Project, pk=project_pk)
+
+        is_project_contributor = IsProjectContributor().has_object_permission(
+            request, view=self, obj=project
+        )
+        if is_project_contributor is False:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         issue = get_object_or_404(Issue, pk=self.kwargs["issue_id"])
         request_data = request.data.copy()
         request_data["author_user"] = request.user.id
